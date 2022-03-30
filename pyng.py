@@ -81,4 +81,30 @@ def verbose(subnet, ping_count, ping_result):
 	else:
 		print('Error: IP Address outside supported range')
 
-speedy(subnet, ping_result)
+def cleanup(ping_result):
+	raw_result = open(ping_result)
+	pings = raw_result.readlines()
+	#raw_result.close()
+	count = 0
+	clean_out = ''
+	while(count < len(pings) - 9):
+		line1 = pings[count]
+		line2 = pings[count+2]
+		line3 = pings[count+3]
+		line4 = ""
+		words = line3.split(" ")
+		if not words[-1] == "loss":
+			line4 = pings[count+4]
+		temp = f'{line1} {line3} {line4}\n'
+		clean_out = "".join(clean_out, temp)
+		if count >= len(pings) - 8:
+			break
+		count+=4
+	# raw_result.close()
+	cleaned = open("cleanout.txt", "a")
+	cleaned.write(clean_out)
+	cleaned.close()
+
+# speedy(subnet, ping_result)
+# cleanup(ping_result)
+
