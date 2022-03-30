@@ -33,6 +33,7 @@ def get_info():
 	var = open(ping_result, "w")
 	var.write(ip)
 	var.close()
+	return subnet
 
 # Run a quick scan of all other hosts on the local subnet
 def speedy(subnet, ping_result):
@@ -98,20 +99,20 @@ def cleanup(ping_result):
 		line3 = pings[count+3]
 		line4 = ""
 		words = line3.split(" ")
-		if words[-1] != "loss":
+		if words[-1].strip() != "loss":
 			line4 = pings[count+4]
 			temp = f'{line1.strip()} {line2.strip()} {line3.strip()} {line4.strip()}\n'
 			clean_out = clean_out + " " + temp
 			count+=1
 		if count >= len(pings) - 4:
 			break
-		count+=3
+		count+=4
 	cleaned = open("cleanout.txt", "w")
 	cleaned.write(clean_out)
 	cleaned.close()
 
 # Tests
-# speedy(subnet, ping_result)
+speedy(get_info(), ping_result)
 cleanup(ping_result)
 
 # Backlog
