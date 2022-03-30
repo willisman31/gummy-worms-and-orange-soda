@@ -3,6 +3,7 @@
 Set of network testing scripts.
 
 **pyng.py** - Discover hosts on network using Ping
+**tryme.py** - Attempt to connect with different ports on select machines
 
 ---
 ## Terminal Commands
@@ -11,5 +12,7 @@ Required library to perform ping using python
 ```
 # Install the python library to ping hosts
 pip3 install pythonping
+# Install this library to connect to other hosts
+pip3 install sockets
 ```
 
