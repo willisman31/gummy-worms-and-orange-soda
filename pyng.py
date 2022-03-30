@@ -8,30 +8,33 @@ ip_info = f'ifconfig | cat > {info}'
 ping_count = 1
 ping_result = 'ping_result.txt'
 
-# Commands
-os.system(ip_info)
+# Functions
 
-# Read in network info from ip config file
-temp = open(info)
-networks = temp.readlines()
-temp.close()
+# Get information about the device's network
+def get_info():
+	os.system(ip_info)
+	# Read in network info from ip config file
+	temp = open(info)
+	networks = temp.readlines()
+	temp.close()
+	
+	count = 0
+	for item in networks:
+		count += 1
+		if item[:4] == 'en0:':
+			break
+	
+	network = networks[count+3]
+	address = network.split(" ")
+	ip = address[1]
+	
+	subnet = ip.split('.')
 
-count = 0
-for item in networks:
-	count += 1
-	if item[:4] == 'en0:':
-		break
+	var = open(ping_result, "w")
+	var.write(ip)
+	var.close()
 
-network = networks[count+3]
-address = network.split(" ")
-ip = address[1]
-
-subnet = ip.split('.')
-
-var = open(ping_result, "w")
-var.write(ip)
-var.close()
-
+# Run a quick scan of all other hosts on the local subnet
 def speedy(subnet, ping_result):
 	if subnet[0] == '10':
 		for host in range(1, 255):
@@ -54,6 +57,7 @@ def speedy(subnet, ping_result):
 	else:
 		print('Error: IP Address outside supported range')
 
+# Run a complete scan of all other hosts on the local network across all subnets
 def verbose(subnet, ping_count, ping_result):
 	if subnet[0] == '10': # class A IP Address
 		for n in range(0, 256):
@@ -81,30 +85,40 @@ def verbose(subnet, ping_count, ping_result):
 	else:
 		print('Error: IP Address outside supported range')
 
+# Clean results of speedy scan
 def cleanup(ping_result):
-	raw_result = open(ping_result)
+	raw_result = open(ping_result, "r")
 	pings = raw_result.readlines()
-	#raw_result.close()
+	raw_result.close()
 	count = 0
 	clean_out = ''
-	while(count < len(pings) - 9):
+	while(count < len(pings) - 4):
 		line1 = pings[count]
 		line2 = pings[count+2]
 		line3 = pings[count+3]
 		line4 = ""
 		words = line3.split(" ")
-		if not words[-1] == "loss":
+		if words[-1] != "loss":
 			line4 = pings[count+4]
-		temp = f'{line1} {line3} {line4}\n'
-		clean_out = "".join(clean_out, temp)
-		if count >= len(pings) - 8:
+			temp = f'{line1.strip()} {line2.strip()} {line3.strip()} {line4.strip()}\n'
+			clean_out = clean_out + " " + temp
+			count+=1
+		if count >= len(pings) - 4:
 			break
-		count+=4
-	# raw_result.close()
-	cleaned = open("cleanout.txt", "a")
+		count+=3
+	cleaned = open("cleanout.txt", "w")
 	cleaned.write(clean_out)
 	cleaned.close()
 
+# Tests
 # speedy(subnet, ping_result)
-# cleanup(ping_result)
+cleanup(ping_result)
+
+# Backlog
+"""
+- Improve efficiency
+- Error handling
+- Method resilience to system config changes
+- Add method to clean verbose results
+"""
 
