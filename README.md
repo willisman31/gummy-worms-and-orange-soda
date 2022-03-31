@@ -8,10 +8,7 @@ Set of network testing scripts.
 ---
 ## Terminal Commands
 Ensure that pip and python3 are installed on the machine before attempting to run any of the scripts.
-Required library to perform ping using python
 ```
-# Install the python library to ping hosts
-pip3 install pythonping
 # Install this library to connect to other hosts
 pip3 install sockets
 ```
